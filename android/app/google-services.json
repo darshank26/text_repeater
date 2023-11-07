@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "291759405732",
+    "project_id": "text-repeater-b9d77",
+    "storage_bucket": "text-repeater-b9d77.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291759405732:android:f5fb1f34c38d9d3da78431",
+        "android_client_info": {
+          "package_name": "com.darshankomu.text_repeater"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDbklmPff2lvzYLFdtNNGNkBf_8idUjm8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
