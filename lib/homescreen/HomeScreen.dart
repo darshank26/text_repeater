@@ -30,13 +30,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _isBannerAdReady = false;
 
+  bool _isChecked = true;
+  String _currText = '';
+
+  var checkRepeater = 2;
+
+
+  var RepeaterLogics = [
+    RepeaterLogic(false, "Repeat Text with Space"),
+    RepeaterLogic(true, "Repeat Text with new Line"),
+    RepeaterLogic(false, "Repeat Text with Vertical space")
+  ];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     if(textEditingController.text.toString().isEmpty)
     {
-      textEditingController.text = "I Love You ";
+      textEditingController.text = "I Love You ❤️ 🥰\n";
       countEditingController.text = 100.toString();
       output = textEditingController.text.toString()*(countEditingController.text !='' ? int.parse(countEditingController.text) : 0);
 
@@ -68,6 +79,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   @override
+  void didChangeDependencies() {
+    // final EstateSearch estate =
+    //     ModalRoute.of(context)!.settings.arguments as EstateSearch;
+    //
+    // RepeaterLogics = estate.rooms!;
+
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     textEditingController.dispose();
@@ -93,9 +114,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
         ),
         actions: [
-          Padding(padding: EdgeInsets.all(10.0),
-    child: Icon(Icons.refresh,size: 30,color: Colors.white,)
+          GestureDetector(
+            onTap: () {
+              refreshData();
+            },
+            child: Padding(padding: EdgeInsets.all(10.0),
+                child: Icon(Icons.refresh,size: 30,color: Colors.white,)
     ),
+          ),
 
 
         ],
@@ -111,14 +137,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: const InputDecoration(
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
-                      Radius.circular(25.0),
+                      Radius.circular(35.0),
                     ),
                     borderSide: BorderSide(
                         color: Colors.blueAccent, width: 1.0),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
-                      Radius.circular(25.0),
+                      Radius.circular(35.0),
                     ),
                     borderSide: BorderSide(
                         color: Colors.blueAccent, width: 1.0),
@@ -153,17 +179,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: TextField(
                         keyboardType: TextInputType. number,
                         controller: countEditingController,
-                        decoration: const InputDecoration(
+                        inputFormatters: <TextInputFormatter>[
+                          // for below version 2 use this
+                          FilteringTextInputFormatter.allow(RegExp(r'[1-9]')),
+                          FilteringTextInputFormatter.digitsOnly
+
+                        ],                        decoration: const InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
-                              Radius.circular(25.0),
+                              Radius.circular(35.0),
                             ),
                             borderSide: BorderSide(
                                 color: Colors.blueAccent, width: 1.0),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(
-                              Radius.circular(25.0),
+                              Radius.circular(35.0),
                             ),
                             borderSide: BorderSide(
                                 color: Colors.blueAccent, width: 1.0),
@@ -180,25 +211,39 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(width: 15,),
 
-                ElevatedButton(
-                  onPressed: () async{
-                    setState(() {
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async{
+                      setState(() {
 
-                            output = textEditingController.text.toString()*(countEditingController.text !='' ? int.parse(countEditingController.text) : 0);
+                        if(checkRepeater == 1)
+                        {
+                          output = (textEditingController.text.toString() + ' ')*(countEditingController.text !='' ? int.parse(countEditingController.text) : 0);
 
+                        }
+                        else if ( checkRepeater == 2 )
+                        {
+                          output = (textEditingController.text.toString() + '\n')*(countEditingController.text !='' ? int.parse(countEditingController.text) : 0);
 
+                        }
+                        else if (checkRepeater == 3)
+                          {
+                            output = (textEditingController.text.toString() + '\n\n')*(countEditingController.text !='' ? int.parse(countEditingController.text) : 0);
 
-                    });
-                  },
-                  child: Text('Repeat text',
+                          }
+
+                      });
+                    },
+                    child: Text('Repeat text',
     style: GoogleFonts.mochiyPopOne(textStyle: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.w400,letterSpacing: 0.6))
-                    ),
-                  style: ElevatedButton.styleFrom(
-                      primary: Colors.blueAccent,
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                      textStyle: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600)),
+                      ),
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.blueAccent,
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        textStyle: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600)),
+                  ),
                 ),
                 SizedBox(width: 15,),
 
@@ -300,8 +345,69 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
 
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blueAccent,
+        onPressed: ()  async{
+          setState(()  {
+
+            showModalBottomSheet(
+                context: context,
+                builder: (BuildContext bc){
+                  return StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                        child:
+                       return Container(
+                          height: 200.0,
+                          child: Column(
+                            children: [
+                              for (var item in RepeaterLogics)
+                                CheckboxListTile(
+                                  activeColor: Colors.blueAccent,
+                                  title: Text('${item.name}',
+                                      style: GoogleFonts.mochiyPopOne(textStyle: TextStyle(fontSize: 14,color: Colors.black87,fontWeight: FontWeight.w100,letterSpacing: 0.6))
+                                  ),
+                                  value: item.isSelected,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      item.isSelected = value!;
+
+
+                                      if(item.name == "Repeat Text with Space")
+                                        {
+                                          checkRepeater = 1;
+                                        }
+                                      else if (item.name == "Repeat Text with new Line")
+                                        {
+                                          checkRepeater = 2;
+
+                                        }
+                                      else if (item.name == "Repeat Text with Vertical space")
+                                      {
+                                        checkRepeater = 3;
+
+                                      }
+                                       print(checkRepeater);
+                                    });
+                                  },
+                                ),
+                            ],
+                          ),
+                        );
+                      }
+                  );
+                }
+            );
+          });
+
+              },
+        child: new Icon(Icons.settings,color: Colors.white,),
+      ),
+
     );
   }
+
+
+
 
   void copyData() {
      Clipboard.setData(ClipboardData(text: output));
@@ -311,6 +417,32 @@ class _HomeScreenState extends State<HomeScreen> {
     Share.share(output);
   }
 
+  void refreshData() {
+    setState(() {
+      if(textEditingController.text.toString().isNotEmpty)
+      {
+        textEditingController.text = "I Love You ❤️ 🥰\n";
+        countEditingController.text = 100.toString();
+        output = textEditingController.text.toString()*(countEditingController.text !='' ? int.parse(countEditingController.text) : 0);
+      }
+      else
+      {
+        output = textEditingController.text.toString()*(countEditingController.text !='' ? int.parse(countEditingController.text) : 0);
+      }
+
+    });
 
 
+  }
+
+
+
+
+}
+
+class RepeaterLogic {
+  bool isSelected;
+  String name;
+
+  RepeaterLogic(this.isSelected, this.name);
 }
